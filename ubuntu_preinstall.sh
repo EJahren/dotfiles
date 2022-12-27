@@ -1,7 +1,7 @@
 set -e
 sudo apt install curl python3-pip python3-dev libfuse-dev ripgrep kitty xscreensaver gmrun feh suckless-tools libghc-xmonad-contrib-dev libghc-xmonad-dev xmobar xmonad clang xclip
 
-curl -L https://github.com/neovim/neovim/releases/download/v0.8.0/nvim.appimage --output nvim.appimage
+curl -L https://github.com/neovim/neovim/releases/download/v0.8.1/nvim.appimage --output nvim.appimage
 sudo mv nvim.appimage /usr/bin/
 sudo chmod +x /usr/bin/nvim.appimage
 
