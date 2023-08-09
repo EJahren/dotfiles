@@ -10,8 +10,3 @@ require("nvim-treesitter.configs").setup({
 })
 -- Setup treesitter
 require('nvim-treesitter.install').compilers = { "clang" }
-
-vim.treesitter.set_query("python", "folds", [[
-    (function_definition (block) @fold)
-    (class_definition (block) @fold)
-]])
