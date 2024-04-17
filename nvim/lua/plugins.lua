@@ -51,10 +51,10 @@ return require("packer").startup({
     use({ "vim-airline/vim-airline-themes" })
     use({ "tpope/vim-vinegar" })
     use({ "tpope/vim-fugitive" })
-    use({ "Olical/conjure" })
     use({
-        "python-rope/ropevim",
-        setup = function() require("setup/ropevim") end
+        "vimwiki/vimwiki",
+        config = function () require("setup/vim-wiki") end,
+        tag="v2023.04.04_1"
     })
     use({
         "vim-test/vim-test",
