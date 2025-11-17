@@ -39,7 +39,7 @@ end
 
 local servers = { 'pyright', 'clangd' }
 for _, lsp in ipairs(servers) do
-    require('lspconfig')[lsp].setup {
+    vim.lsp.config[lsp] = {
     on_attach = on_attach,
     flags = {
       debounce_text_changes = 150,

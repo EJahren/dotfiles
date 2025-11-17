@@ -1,73 +1,57 @@
-vim.cmd([[
-  augroup packer_user_config
-    autocmd!
-    autocmd BufWritePost plugins.lua source <afile> | PackerCompile
-  augroup end
-]])
-
-local fn = vim.fn
-local install_path = fn.stdpath("data") .. "/site/pack/packer/start/packer.nvim"
-if fn.empty(fn.glob(install_path)) > 0 then
-  packer_bootstrap = fn.system({
-    "git",
-    "clone",
-    "--depth",
-    "1",
-    "https://github.com/wbthomason/packer.nvim",
-    install_path,
-  })
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+  local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+  local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+  if vim.v.shell_error ~= 0 then
+    vim.api.nvim_echo({
+      { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
+      { out, "WarningMsg" },
+      { "\nPress any key to exit..." },
+    }, true, {})
+    vim.fn.getchar()
+    os.exit(1)
+  end
 end
-vim.api.nvim_command("packadd packer.nvim")
--- returns the require for use in `config` parameter of packer's use
--- expects the name of the config file
+vim.opt.rtp:prepend(lazypath)
 
-return require("packer").startup({
-  function(use)
-    -- Packer can manage itself
-    use("wbthomason/packer.nvim")
-    use({
+-- Make sure to setup `mapleader` and `maplocalleader` before
+-- loading lazy.nvim so that mappings are correct.
+-- This is also a good place to setup other settings (vim.opt)
+vim.g.mapleader = "\\"
+vim.g.maplocalleader = "\\"
+
+return require("lazy").setup({
+    {
       "nvim-treesitter/nvim-treesitter",
       config = function() require("setup/treesitter") end,
-      run = ":TSUpdate",
-    })
-    use {
-      'pwntester/octo.nvim',
-      requires = {
-        'nvim-lua/plenary.nvim',
-        'nvim-telescope/telescope.nvim',
-        'kyazdani42/nvim-web-devicons',
-      },
-      config = function ()
-        require"octo".setup()
-      end
-    }
-    use({ "neovim/nvim-lspconfig", config = function() require("setup/lsp") end })
-    use({ "simnalamburt/vim-mundo" })
-    use({ "vim-airline/vim-airline",
+      build = ":TSUpdate",
+    },
+    { "neovim/nvim-lspconfig", config = function() require("setup/lsp") end },
+    { "simnalamburt/vim-mundo", version = "v3.0.1" },
+    { "vim-airline/vim-airline",
         config = function () require("setup/vim-airline") end,
-        requires = { "vim-airline/vim-airline-themes" },
-        tag = "v0.11"
-    })
-    use({ "vim-airline/vim-airline-themes" })
-    use({ "tpope/vim-vinegar" })
-    use({ "tpope/vim-fugitive" })
-    use({
+        dependencies = { "vim-airline/vim-airline-themes" },
+        version = "v0.11"
+    },
+    { "vim-airline/vim-airline-themes" },
+    { "tpope/vim-vinegar" },
+    { "tpope/vim-fugitive" },
+    {
         "vimwiki/vimwiki",
         config = function () require("setup/vim-wiki") end,
-        tag="v2023.04.04_1"
-    })
-    use({
+        version="v2023.04.04_1"
+    },
+    {
         "vim-test/vim-test",
         setup = function () require("setup/vim-test") end
-    })
-    use({ "psf/black" })
-    use({ "fisadev/vim-isort" })
-    use({ "lervag/vimtex",
+    },
+    { "psf/black" },
+    { "lervag/vimtex",
       config = function() require("setup/vimtex") end
-    })
-    use {
+    },
+    {
        "hrsh7th/nvim-cmp",
-       requires = {
+       dependencies = {
          { "onsails/lspkind-nvim", module = "lspkind" },
          { "hrsh7th/cmp-buffer", module = "cmp_buffer" },
          { "hrsh7th/cmp-path", module = "cmp_path" },
@@ -78,38 +62,33 @@ return require("packer").startup({
        config = function()
          require "setup/cmp"
        end,
-     }
-    use({
+    },
+    {
       'nvim-telescope/telescope.nvim',
-      tag = '0.1.0',
+      version = '0.1.9',
       config = function() require("setup/telescope") end,
-      requires = {'nvim-lua/plenary.nvim'}
-    })
-    use({
+      requires = {'nvim-lua/plenary.nvim', "folke/which-key.nvim"}
+    },
+    {
         "andythigpen/nvim-coverage",
         config = function() require("setup/coverage") end,
         requires = { "nvim-lua/plenary.nvim" }
-    })
-    use({
+    },
+    {
         "catppuccin/nvim",
-        tag="v0.2.3"
-    })
-    use({"katawful/kat.nvim", tag="2.0"})
-    use {
+        version="v1.11.0"
+    },
+    {"katawful/kat.nvim", version="2.0"},
+    {
       "folke/which-key.nvim",
-      config = function() require("setup/whichkey") end
+      version = "v3.17.0",
+      opts =  {
+          plugins = {
+              spelling = {
+                  enabled = true, -- enabling this will show WhichKey when pressing z= to select spelling suggestions
+                  suggestions = 20, -- how many suggestions should be shown in the list?
+              },
+          },
+      },
     }
-    if packer_bootstrap then
-      require("packer").sync()
-    end
-  end,
-  config = {
-    display = {
-      open_fn = require("packer.util").float,
-    },
-    profile = {
-      enable = true,
-      threshold = 1, -- the amount in ms that a plugins load time must be over for it to be included in the profile
-    },
-  },
 })

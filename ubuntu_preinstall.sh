@@ -2,7 +2,7 @@ set -e
 sudo apt install curl python3-pip python3-dev libfuse-dev ripgrep kitty xscreensaver gmrun feh suckless-tools libghc-xmonad-contrib-dev libghc-xmonad-dev xmobar xmonad clang xclip
 pip install black isort pynvim pyright
 
-curl -L https://github.com/neovim/neovim/releases/download/v0.9.1/nvim.appimage --output nvim.appimage
+curl -L https://github.com/neovim/neovim/releases/download/v0.11.5/nvim.appimage --output nvim.appimage
 sudo mv nvim.appimage /usr/bin/
 sudo chmod +x /usr/bin/nvim.appimage
 
